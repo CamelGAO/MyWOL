@@ -36,57 +36,50 @@ def isValidPort(_port):
         return True
     except ValueError:
         return False
-
-#print("name:", sys.argv[0])
-
-for i in range(1, len(sys.argv)):
-    print("argv", i, sys.argv[i])
+        
+def sendMagicPack(_ip, _port, _mac):
+    _mac = _mac.replace(':', '')
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+    s.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
+    s.sendto(binascii.unhexlify("ff"*6+_mac*16),(_ip,_port))
+    s.close()
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "ha:m:p:")
-#    print("opts")
-#    for i in opts:
-#        print(i[0], i[1])
-#    print("args")
-#    for value in args:
-#        print(value)
 except getopt.GetoptError:
     usage();
     sys.exit(1)
 
 for opt, value in opts:
     if(opt == "-h"):
-        usage();
-    elif(opt == "-a"):
+        usage()
+        exit
+       
+for opt, value in opts: 
+    if(opt == "-a"):
         if isValidIp(value):
             print("ip:", value)
             ip_address = value
         else:
-            print("Invalid ip")
-            flag -= 1
-    elif(opt == "-m"):
-        if isValidMac(value):
-            print("mac:", value)
-            mac_address = value
-            flag += 1
-        else:
-            print("Invalid mac")
-    elif(opt == "-p"):
+            print("Invalid Ip")
+            exit
+        
+for opt, value in opts:
+    if(opt == "-p"):
         if isValidPort(value):
             print("port:", value)
             port_number = int(value)
         else:
             print("Invalid port")
-            flag -= 1
-
-if flag != 1:
-    exit
-
-mac_address = mac_address.replace(':', '')
-
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
-s.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
-
-s.sendto(binascii.unhexlify("FF"*6+mac_address*16),(ip_address,port_number))
-
-s.close()
+            exit
+            
+for opt, value in opts:
+    if(opt == "-m"):
+        if isValidMac(value):
+            print("mac:", value)
+            mac_address = value
+            sendMagicPack(ip_address, port_number, mac_address)
+            print("A magic pack has been sent.")
+        else:
+            print("Invalid Mac")
+            exit
