@@ -46,14 +46,16 @@ def sendMagicPack(_ip, _port, _mac):
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "ha:m:p:")
+    if len(opts) == 0:
+        raise getopt.GetoptError("No argument!")
 except getopt.GetoptError:
-    usage();
+    usage()
     sys.exit(1)
 
 for opt, value in opts:
     if(opt == "-h"):
         usage()
-        exit
+        sys.exit(1)
        
 for opt, value in opts: 
     if(opt == "-a"):
@@ -62,7 +64,7 @@ for opt, value in opts:
             ip_address = value
         else:
             print("Invalid Ip")
-            exit
+            sys.exit(1)
         
 for opt, value in opts:
     if(opt == "-p"):
@@ -71,7 +73,7 @@ for opt, value in opts:
             port_number = int(value)
         else:
             print("Invalid port")
-            exit
+            sys.exit(1)
             
 for opt, value in opts:
     if(opt == "-m"):
@@ -82,4 +84,4 @@ for opt, value in opts:
             print("A magic pack has been sent.")
         else:
             print("Invalid Mac")
-            exit
+            sys.exit(1)
